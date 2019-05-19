@@ -1,44 +1,110 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Now Playing – Dashboard
 
-## Available Scripts
+Dette er dashboardet til en app som skal vise aktiv sang fra Spotify for alle de som er autorisert til løsningen.
+Målet med dashboardet er å ha en oversiktelig og visuell fremstilling av hva forskjellige folk hører på.
 
-In the project directory, you can run:
+Kort oppsumert fungerer det slik:
 
-### `npm start`
+1. En bruker autoriserer via OAuth mot Spotify.
+2. Denne brukeren legges til en tabell i backend.
+3. Vi kan spørre etter alle autoriserte brukere
+4. Vi kan lytte på WebSockets (via SignalR) for lytterinformasjon
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Oppstart
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+Det er brukt Yarn for å installere avhengigheter og har derfor en `yarn.lock` fil. Avhengigheter kan derfor brukes med det.
 
-### `npm test`
+```sh
+# Fra root /src/dashboard
+yarn install
+```
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Legg til `.env` fil basert på `.env.example` og fyll ut `REACT_APP_BASE_URL`.
 
-### `npm run build`
+Start løsningen med
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```sh
+yarn start
+```
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+Rediger i `src/index.tsx` eller `src/index.js` alt etter.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## API
 
-### `npm run eject`
+Her er en kort oppsummering av de endepunktene vi kan bruke:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+`<baseUrl>` i eksemplene kan være `process.env.REACT_APP_BASE_URL` hvor `REACT_APP_BASE_URL` er satt i `.env` fil lokalt.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### `POST <baseUrl>/api/users -> Array<User>`
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Henter ut liste av alle brukere. Modell:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```ts
+export interface User {
+  id: string;
+  name: string;
+  spotifyUri: string;
+  spotifyHttpUrl: string;
+}
+```
 
-## Learn More
+### `GET <baseUrl>/api/authorize`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Brukes til å legge til en ny bruker til systemet. Redirecter tilbake til `http://localhost:3000`. Kan brukes som en vanlig lenke, uten AJAX.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### `POST <baseUrl>/api/negotiate`
+
+Brukes for å koble til SignalR og WebSockets. Med bruk av SignalR-klient legges `/negotiate` til selv. Eksempelbruk:
+
+```js
+const connection = new HubConnectionBuilder()
+  .withUrl(`${this.baseUrl}/api`)
+  .configureLogging(LogLevel.Information)
+  .build();
+
+connection.on("updateTracks", (listenerTracks?: Array<ListenerTrack>) => {
+  console.log(listenerTracks);
+});
+```
+
+Hvor modeller ser slik ut:
+
+```ts
+export interface ListenerTrack {
+  UserId: string;
+  CurrentTrack: CurrentTrack;
+}
+
+export interface CurrentTrack {
+  item: Track;
+  is_playing: boolean;
+  progress_ms: number;
+}
+
+export interface Track {
+  name: string;
+  uri: string;
+  duration_ms: number;
+  artists: Array<Artist>;
+  album: Album;
+}
+
+export interface Artist {
+  id: string;
+  name: string;
+  uri: string;
+}
+
+export interface Album {
+  id: string;
+  name: string;
+  uri: string;
+  images: Array<Image>;
+}
+
+export interface Image {
+  height: number;
+  url: string;
+  width: number;
+}
+```
