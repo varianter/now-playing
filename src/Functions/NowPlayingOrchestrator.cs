@@ -22,8 +22,7 @@ namespace Functions
 
             if (!ctx.IsReplaying)
             {
-                log.LogInformation("Orchestration interval {Interval}", data.Interval);
-                log.LogInformation("Current listeners this interval: {Listeners}", data.MusicListeners);
+                log.LogInformation("Orchestration interval {Interval}. Current listeners: {Listeners}", data.Interval, string.Join(", ", data.MusicListeners?.Select(l => l.UserId)));
             }
 
             try

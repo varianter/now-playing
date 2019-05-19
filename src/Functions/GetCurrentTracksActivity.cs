@@ -17,29 +17,7 @@ namespace Functions
             ILogger log
             )
         {
-            var tasks = listenerIds.Select((userId) => Get(userId, log));
-
-            var results = await Task.WhenAll(tasks);
-
-            return results.Where(r => r != null).ToList();
-        }
-
-        private static async Task<ListenerTrack> Get(string userId, ILogger log)
-        {
-            try
-            {
-                var currentTrack = await SpotifyHelper.GetCurrentTrackAsync(userId);
-                return new ListenerTrack
-                {
-                    UserId = userId,
-                    CurrentTrack = currentTrack
-                };
-            }
-            catch (Exception ex)
-            {
-                log.LogError(ex, "Failed to get current track for user {UserId}", userId);
-                return null;
-            }
+            return await SpotifyHelper.GetListenerTracks(listenerIds, log);
         }
     }
 }
