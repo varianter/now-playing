@@ -35,7 +35,7 @@ Her er en kort oppsummering av de endepunktene vi kan bruke:
 
 `<baseUrl>` i eksemplene kan være `process.env.REACT_APP_BASE_URL` hvor `REACT_APP_BASE_URL` er satt i `.env` fil lokalt.
 
-### `POST <baseUrl>/api/users -> Array<User>`
+### `GET <baseUrl>/api/users -> Array<User>`
 
 Henter ut liste av alle brukere. Modell:
 
@@ -108,3 +108,9 @@ export interface Image {
   width: number;
 }
 ```
+
+### `GET <baseUrl>/api/listeners -> Array<ListenerTrack>`
+
+Henter ut alle brukere med hvilken sang de hører på akkurat nå. Returnerer liste av `ListenerTrack` som definert over.
+
+**Note: burde ikke brukes med polling da det påvirker API rate limit hos Spotify**
