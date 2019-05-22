@@ -6,8 +6,8 @@ export interface User {
 }
 
 export interface ListenerTrack {
-  UserId: string;
-  CurrentTrack: CurrentTrack;
+  userId: string;
+  currentTrack: CurrentTrack;
 }
 
 export interface CurrentTrack {

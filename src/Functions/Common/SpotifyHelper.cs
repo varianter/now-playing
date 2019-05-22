@@ -53,13 +53,13 @@ namespace Functions.Common
                 var currentTrack = await SpotifyHelper.GetCurrentTrackAsync(userId);
                 return new ListenerTrack
                 {
-                    UserId = userId,
-                    CurrentTrack = currentTrack
+                    userId = userId,
+                    currentTrack = currentTrack
                 };
             }
             catch (Exception ex)
             {
-                log.LogError(ex, "Failed to get current track for user {UserId}", userId);
+                log.LogError(ex, "Failed to get current track for user {UserId}, message: {ExceptionMessage}, inner: {ExceptionMessage}, stack: {ExceptionStack}", userId, ex.Message, ex.InnerException?.Message, ex.StackTrace);
                 return null;
             }
         }

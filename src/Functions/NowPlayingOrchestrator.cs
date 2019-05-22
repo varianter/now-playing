@@ -61,16 +61,16 @@ namespace Functions
                 if (data.MusicListeners == null)
                     data.MusicListeners = new List<MusicListener>();
 
-                foreach (var playingTrack in currentListenerTracks.Where(t => t.CurrentTrack?.is_playing == true))
+                foreach (var playingTrack in currentListenerTracks.Where(t => t.currentTrack?.is_playing == true))
                 {
-                    var listener = data.MusicListeners.FirstOrDefault(m => m.UserId == playingTrack.UserId);
+                    var listener = data.MusicListeners.FirstOrDefault(m => m.UserId == playingTrack.userId);
                     if (listener != null)
                     {
                         listener.LastSeenActivity = ctx.CurrentUtcDateTime;
                     }
                     else
                     {
-                        data.MusicListeners.Add(new MusicListener { UserId = playingTrack.UserId, LastSeenActivity = ctx.CurrentUtcDateTime });
+                        data.MusicListeners.Add(new MusicListener { UserId = playingTrack.userId, LastSeenActivity = ctx.CurrentUtcDateTime });
                     }
                 }
             }

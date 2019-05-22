@@ -5,7 +5,7 @@ namespace Functions.Models.Orchestrator
 
     public class ListenerTrack
     {
-        public string UserId { get; set; }
-        public CurrentTrack CurrentTrack { get; set; }
+        public string userId { get; set; }
+        public CurrentTrack currentTrack { get; set; }
     }
 }

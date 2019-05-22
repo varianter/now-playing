@@ -23,6 +23,7 @@ namespace Functions
             )] CloudTable userTable,
             ILogger log)
         {
+            log.LogInformation("Retrieving non-hidden users");
             await userTable.CreateIfNotExistsAsync();
 
             var repo = new UserRepository(userTable);
@@ -31,6 +32,8 @@ namespace Functions
                     .Where(e => e.Active)
                     .Select(e => e.RowKey)
                     .ToList();
+
+            log.LogInformation("Found these users: {Users}", string.Join(", ", nonHiddenUserIds));
 
             return await SpotifyHelper.GetListenerTracks(nonHiddenUserIds, log);
         }
