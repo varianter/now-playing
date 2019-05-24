@@ -81,7 +81,7 @@ function App() {
   useEffect(function() {
     async function wrap() {
       try {
-        const result = await fetch(`${baseUrl}api/listeners`);
+        const result = await fetch(`${baseUrl}/api/listeners`);
         const listeners = await result.json();
         setListeners(listeners);
       } catch (_) {
@@ -92,7 +92,7 @@ function App() {
   }, []);
   useEffect(function() {
     const connection = new HubConnectionBuilder()
-      .withUrl(`${baseUrl}api`)
+      .withUrl(`${baseUrl}/api`)
       .configureLogging(LogLevel.Information)
       .build();
 
