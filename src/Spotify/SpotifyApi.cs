@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -69,6 +70,17 @@ namespace Spotify
             currentTrackResponse.EnsureSuccessStatusCode();
 
             return await currentTrackResponse.Content.ReadAsAsync<CurrentTrack>();
+        }
+
+        public static async Task<PlayHistory> GetRecentlyPlayedTracksAsync(string accessToken)
+        {
+            var recentlyPlayedRequest = new HttpRequestMessage(HttpMethod.Get, $"{Config.ApiBaseUrl}/v1/me/player/recently-played?limit=50");
+            recentlyPlayedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var recentlyPlayedResponse = await _client.SendAsync(recentlyPlayedRequest);
+            recentlyPlayedResponse.EnsureSuccessStatusCode();
+
+            return await recentlyPlayedResponse.Content.ReadAsAsync<PlayHistory>();
         }
     }
 }

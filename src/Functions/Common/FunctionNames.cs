@@ -6,6 +6,7 @@ namespace Functions.Common
         public const string HttpCallback = "Http_AuthorizeCallback";
         public const string HttpUsers = "Http_Users";
         public const string HttpListenerTracks = "Http_ListenerTracks";
+        public const string HttpRecentlyPlayed = "Http_RecentlyPlayed";
         public const string HttpSignalRNegotiate = "Http_SignalRNegotiate";
         public const string NowPlayingOrchestrator = "O_NowPlaying";
         public const string GetCurrentTracksActivity = "A_GetCurrentTracks";
