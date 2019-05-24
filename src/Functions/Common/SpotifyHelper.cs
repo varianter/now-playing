@@ -13,7 +13,7 @@ namespace Functions.Common
 {
     public class SpotifyHelper
     {
-        public static async Task<CurrentTrack> GetCurrentTrackAsync(string userId)
+        private static async Task<string> GetAccessToken(string userId)
         {
             TokenSecrets tokens = null;
             try
@@ -34,7 +34,21 @@ namespace Functions.Common
                 await SecretRepository.SaveToken(userId, tokens);
             }
 
-            return await SpotifyApi.GetCurrentTrackAsync(tokens.AccessToken);
+            return tokens.AccessToken;
+        }
+
+        public static async Task<CurrentTrack> GetCurrentTrackAsync(string userId)
+        {
+            var accessToken = await GetAccessToken(userId);
+
+            return await SpotifyApi.GetCurrentTrackAsync(accessToken);
+        }
+
+        public static async Task<PlayHistory> GetRecentlyPlayedTracksAsync(string userId)
+        {
+            var accessToken = await GetAccessToken(userId);
+
+            return await SpotifyApi.GetRecentlyPlayedTracksAsync(accessToken);
         }
 
         public static async Task<List<ListenerTrack>> GetListenerTracks(List<string> userIds, ILogger log)
@@ -50,7 +64,7 @@ namespace Functions.Common
         {
             try
             {
-                var currentTrack = await SpotifyHelper.GetCurrentTrackAsync(userId);
+                var currentTrack = await GetCurrentTrackAsync(userId);
                 return new ListenerTrack
                 {
                     userId = userId,
