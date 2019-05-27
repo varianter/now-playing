@@ -22,16 +22,9 @@ namespace Functions.Repositories
 
         public async Task<UserEntity> GetUserAsync(string userId)
         {
-            try
-            {
-                var operation = TableOperation.Retrieve<UserEntity>(TableConstants.UserPartitionKey, userId);
-                var result = await _table.ExecuteAsync(operation);
-                return result.Result as UserEntity;
-            }
-            catch
-            {
-                return null;
-            }
+            var operation = TableOperation.Retrieve<UserEntity>(TableConstants.UserPartitionKey, userId);
+            var result = await _table.ExecuteAsync(operation);
+            return result.Result as UserEntity;
         }
 
         public async Task AddUser(UserEntity user)
