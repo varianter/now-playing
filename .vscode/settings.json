@@ -4,5 +4,6 @@
   "azureFunctions.templateFilter": "Verified",
   "azureFunctions.deploySubpath": "src/Functions/bin/Release/netcoreapp2.1/publish",
   "azureFunctions.preDeployTask": "publish",
-  "debug.internalConsoleOptions": "neverOpen"
+  "debug.internalConsoleOptions": "neverOpen",
+  "FSharp.fsacRuntime": "netcore"
 }

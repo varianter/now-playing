@@ -1,0 +1,53 @@
+{
+  "currentTrack": {
+    "timestamp": 1490252122574,
+    "progress_ms": "44272",
+    "is_playing": true,
+    "item": {
+      "name": "track name",
+      "uri": "track_uri",
+      "duration_ms": 2000993,
+      "artists": [
+        {
+          "id": "some_id",
+          "name": "some_name",
+          "uri": "some_uri"
+        },
+        {
+          "id": "some_other_id",
+          "name": "some_other_name",
+          "uri": "some_other_uri"
+        }
+      ],
+      "album": {
+        "id": "some_id",
+        "name": "some_name",
+        "uri": "spotify://someuri",
+        "images": [
+          {
+            "height": 100,
+            "url": "some_uri",
+            "width": 100
+          }
+        ]
+      }
+    },
+    "shuffle_state": false,
+    "repeat_state": "off",
+    "context": {
+      "external_urls": {
+        "spotify": "http://open.spotify.com/user/spotify/playlist/49znshcYJROspEqBoHg3Sv"
+      },
+      "href": "https://api.spotify.com/v1/users/spotify/playlists/49znshcYJROspEqBoHg3Sv",
+      "type": "playlist",
+      "uri": "spotify:user:spotify:playlist:49znshcYJROspEqBoHg3Sv"
+    }
+  },
+  "token": {
+    "access_token": "some_string",
+    "token_type": "some_string",
+    "scope": "some_string",
+    "expires_in": 3600,
+    "refresh_token": "some_string"
+  }
+}
