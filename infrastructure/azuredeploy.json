@@ -45,7 +45,7 @@
     },
     "roleAssignmentName": {
       "type": "string",
-      "defaultValue": "41CC9E48-325D-4719-AD74-D2A49B2F92FE",
+      "defaultValue": "E3529EE2-8A7D-4939-9EC2-BAC08E11DE4C",
       "metadata": {
         "description": "Function app role assignment name."
       }
