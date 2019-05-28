@@ -3,16 +3,17 @@ module Config
 open System
 open System.Text
 
-let accountBaseUrl = "https://accounts.spotify.com"
+[<Literal>]
+let AccountBaseUrl = "https://accounts.spotify.com"
 
-let apiBaseUrl ="https://api.spotify.com"
+[<Literal>]
+let ApiBaseUrl ="https://api.spotify.com"
+
+[<Literal>]
+let RequestedScopes = "user-read-currently-playing user-read-recently-played"
 
 let clientId = Environment.GetEnvironmentVariable("SpotifyApiClientId")
-
 let clientSecret = Environment.GetEnvironmentVariable("SpotifyApiClientSecret")
-
-let requestedScopes = "user-read-currently-playing user-read-recently-played"
-
 let spotifyApiBasicAuthHeaderValue =
     (clientId + ":" + clientSecret)
     |> Encoding.Default.GetBytes

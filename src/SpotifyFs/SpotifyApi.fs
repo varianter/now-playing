@@ -7,7 +7,7 @@ type CurrentTrack = JsonProvider<"./data/current.json">
 type Token = JsonProvider<"./data/token.json">
 type Me = JsonProvider<"./data/me.json">
 
-let private apiUrl = sprintf "%s/me%s" Config.apiBaseUrl 
+let private apiUrl = sprintf "%s/me%s" Config.ApiBaseUrl 
 let private map f op = async {
     let! x = op
     return f x
@@ -21,15 +21,14 @@ let private getAsync parse path accessToken =
 
 let private postTokenRequest body =
     Http.AsyncRequestString
-      ( sprintf "%s/api/token" Config.accountBaseUrl,
+      ( sprintf "%s/api/token" Config.AccountBaseUrl,
         body = FormValues body,
         headers = [ Authorization ("Basic " + Config.spotifyApiBasicAuthHeaderValue) ] )
       |> map Token.Parse
 
 let constructAuthorizedRedirectUrl redirectUri state =
   sprintf "%s/authorize?client_id=%s&response_type=code&redirect_uri=%s&state=%s&scope=%s"
-    Config.accountBaseUrl Config.clientId redirectUri state Config.requestedScopes
-
+    Config.AccountBaseUrl Config.clientId redirectUri state Config.RequestedScopes
 
 let getUserInfoAsync = getAsync Me.Parse "/me"
 let getCurrentTrackAsync = getAsync CurrentTrack.Parse "/me/player/currently-playing"
