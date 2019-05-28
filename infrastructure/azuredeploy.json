@@ -42,6 +42,13 @@
       "metadata": {
         "description": "The language worker runtime to load in the function app."
       }
+    },
+    "roleAssignmentName": {
+      "type": "string",
+      "defaultValue": "41CC9E48-325D-4719-AD74-D2A49B2F92FE",
+      "metadata": {
+        "description": "Function app role assignment name."
+      }
     }
   },
   "variables": {
@@ -184,6 +191,19 @@
       }
     },
     {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2017-09-01",
+      "name": "[parameters('roleAssignmentName')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+      ],
+      "properties": {
+        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+        "principalId": "[reference(variables('functionAppIdentityId'), '2015-08-31-PREVIEW').principalId]",
+        "scope": "[resourceGroup().id]"
+      }
+    },
+    {
       "type": "Microsoft.KeyVault/vaults",
       "name": "[variables('keyVaultName')]",
       "apiVersion": "2018-02-14",
@@ -196,34 +216,6 @@
         "enabledForDiskEncryption": false,
         "enabledForTemplateDeployment": false,
         "tenantId": "[reference(variables('functionAppIdentityId'), '2015-08-31-PREVIEW').tenantId]",
-        "accessPolicies": [
-          {
-            "tenantId": "[reference(variables('functionAppIdentityId'), '2015-08-31-PREVIEW').tenantId]",
-            "objectId": "[reference(variables('functionAppIdentityId'), '2015-08-31-PREVIEW').principalId]",
-            "permissions": {
-              "keys": [
-                "get",
-                "list",
-                "update",
-                "create",
-                "import",
-                "delete",
-                "recover",
-                "backup",
-                "restore"
-              ],
-              "secrets": [
-                "get",
-                "list",
-                "set",
-                "delete",
-                "recover",
-                "backup",
-                "restore"
-              ]
-            }
-          }
-        ],
         "sku": {
           "name": "Standard",
           "family": "A"
