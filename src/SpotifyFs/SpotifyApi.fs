@@ -19,7 +19,7 @@ let private getAsync parse path accessToken =
       headers = [ Authorization ("Bearer " + accessToken) ] )
     |> map parse
 
-let private postTokenRequest body =
+let private postTokenRequestAsync body =
     Http.AsyncRequestString
       ( sprintf "%s/api/token" Config.AccountBaseUrl,
         body = FormValues body,
@@ -35,10 +35,10 @@ let getCurrentTrackAsync = getAsync CurrentTrack.Parse "/me/player/currently-pla
 let getRecentlyPlayedTracksAsync = getAsync RecentlyPlayed.Parse "/me/player/recently-played?limit=50"
 
 let finishAuthorizeAsync code redirectUrl =
-  postTokenRequest [ ("grant_type", "authorization_code"); 
+  postTokenRequestAsync [ ("grant_type", "authorization_code"); 
                      ("code", code); 
                      ("redirect_uri", redirectUrl); ]
 
 let refreshTokenAsync refreshToken =
-  postTokenRequest [ ("grant_type", "refresh_token"); 
+  postTokenRequestAsync [ ("grant_type", "refresh_token"); 
                      ("refresh_token", refreshToken); ]
