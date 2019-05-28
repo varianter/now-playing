@@ -31,13 +31,9 @@ let constructAuthorizedRedirectUrl redirectUri state =
     Config.accountBaseUrl Config.clientId redirectUri state Config.requestedScopes
 
 
-let getUserInfoAsync accessToken =
-  getAsync Me.Parse "/me" accessToken
-let getCurrentTrackAsync accessToken =
-  getAsync CurrentTrack.Parse "/me/player/currently-playing" accessToken
-let getRecentlyPlayedTracksAsync accessToken =
-  getAsync RecentlyPlayed.Parse "/me/player/recently-played?limit=50" accessToken
-
+let getUserInfoAsync = getAsync Me.Parse "/me"
+let getCurrentTrackAsync = getAsync CurrentTrack.Parse "/me/player/currently-playing"
+let getRecentlyPlayedTracksAsync = getAsync RecentlyPlayed.Parse "/me/player/recently-played?limit=50"
 
 let finishAuthorizeAsync code redirectUrl =
   postTokenRequest [ ("grant_type", "authorization_code"); 
