@@ -36,7 +36,7 @@ Target.create "Clean" <| fun _ ->
 
 // Use the given dotnet SDK to restore packages and build the solution into the 'build' folder
 Target.create "Build" <| fun _ ->
-    DotNet.publish (fun opt -> { opt with OutputPath = Some <| sprintf "%s/app" buildDir }) sln
+    DotNet.publish (fun opt -> { opt with OutputPath = Some <| buildDir }) sln
 //Runtime = Some "win-x64" ;
 
 // Zip the 'build' folder and place the zip in the 'artifacts' folder together with the
