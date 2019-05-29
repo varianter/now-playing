@@ -42,13 +42,6 @@
       "metadata": {
         "description": "The language worker runtime to load in the function app."
       }
-    },
-    "roleAssignmentName": {
-      "type": "string",
-      "defaultValue": "E3529EE2-8A7D-4939-9EC2-BAC08E11DE4C",
-      "metadata": {
-        "description": "Function app role assignment name."
-      }
     }
   },
   "variables": {
@@ -61,7 +54,8 @@
     "keyVaultName": "[concat(variables('appNameShort'), uniquestring(resourceGroup().id))]",
     "storageAccountName": "[concat(variables('appNameShort'), uniquestring(resourceGroup().id))]",
     "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
-    "functionWorkerRuntime": "[parameters('runtime')]"
+    "functionWorkerRuntime": "[parameters('runtime')]",
+    "roleAssignmentName": "[guid('FunctionAppRoleAssignment', parameters('appName'))]"
   },
   "resources": [
     {
@@ -187,13 +181,14 @@
         "capacity": 1
       },
       "properties": {
+        "features": [{ "flag": "ServiceMode", "value": "Serverless" }],
         "hostNamePrefix": "[variables('signalRHubName')]"
       }
     },
     {
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2017-09-01",
-      "name": "[parameters('roleAssignmentName')]",
+      "name": "[variables('roleAssignmentName')]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
       ],
