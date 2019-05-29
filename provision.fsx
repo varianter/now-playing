@@ -83,7 +83,7 @@ Target.create "DeployFunctionApp" <| fun ctx ->
                     | Some zip -> zip
                     | None -> failwith "Couldn't find any zipfile for function app deployment. Try providing it with zip=pathtozip."
 
-    sprintf "function app deployment source config-zip -g %s -n %s --src %s --query \"status\""
+    sprintf "functionapp deployment source config-zip -g %s -n %s --src %s --query \"status\""
         appName
         appName
         zipFile

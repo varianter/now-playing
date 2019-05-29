@@ -216,6 +216,7 @@
         "enabledForDiskEncryption": false,
         "enabledForTemplateDeployment": false,
         "tenantId": "[reference(variables('functionAppIdentityId'), '2015-08-31-PREVIEW').tenantId]",
+        "accessPolicies": [],
         "sku": {
           "name": "Standard",
           "family": "A"
