@@ -3,6 +3,20 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Include="data/current.json">
+      <Link>current.json</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data/me.json">
+      <Link>me.json</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data/recently.json">
+      <Link>recently.json</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data/token.json">
+      <Link>token.json</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Config.fs" />
     <Compile Include="SpotifyApi.fs" />
   </ItemGroup>

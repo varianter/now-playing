@@ -2,10 +2,10 @@ module SpotifyFs
 open FSharp.Data
 open FSharp.Data.HttpRequestHeaders
 
-type RecentlyPlayed = JsonProvider<"./data/recently.json">
-type CurrentTrack = JsonProvider<"./data/current.json">
-type Token = JsonProvider<"./data/token.json">
-type Me = JsonProvider<"./data/me.json">
+type RecentlyPlayed = JsonProvider<"../../data/recently.json", RootName="recently">
+type CurrentTrack = JsonProvider<"../../data/current.json", RootName="currentTrack">
+type Token = JsonProvider<"../../data/token.json", RootName="token">
+type Me = JsonProvider<"../../data/me.json", RootName="userInfo">
 
 let private apiUrl = sprintf "%s/me%s" Config.ApiBaseUrl 
 let private map f op = async {
