@@ -31,7 +31,7 @@ let runAzureCli cmd =
             (System.TimeSpan.FromMinutes 15.)
     result.Results |> Seq.iter (fun cm -> printfn "%O: %s" cm.Timestamp cm.Message)
     if not result.OK then failwith (sprintf "az command failed: '%s'." cmd )
-    result.Messages |> Seq.last
+    result.Messages
 
 let tryFindArgument (argument : string) (targetArguments : TargetParameter) =
     targetArguments.Context.Arguments
@@ -39,11 +39,22 @@ let tryFindArgument (argument : string) (targetArguments : TargetParameter) =
     |> Map.ofSeq<string,string>
     |> Map.tryFind argument
 
+let queryValueParser input =
+    let matcher = System.Text.RegularExpressions.Regex("\"(.*)\"")
+    let m =  matcher.Match input
+    m.Value
+
+let parseDeploymentStatus (messages: string list) =
+    match messages.Length with
+    | 4 -> Some(queryValueParser messages.[1], queryValueParser messages.[2])
+    | _ -> None
+
 Target.create "EnsureResourceGroupExists" <| fun ctx ->
     let appName = tryFindArgument "appName" ctx |> Option.get 
     sprintf "group create --location westeurope --name %s --query \"properties.provisioningState\""
         appName
     |> runAzureCli
+    |> Seq.last
     |> function
         | "\"Succeeded\"" -> ()
         | output -> failwith (sprintf "Could not provision Resource Group. Output: %s" output)
@@ -57,7 +68,7 @@ Target.create "RunGroupDeployment" <| fun ctx ->
         |> Option.get
         |> sprintf "infrastructure/parameters/%s.parameters.json" 
     let templateFile = "infrastructure/azuredeploy.json"
-    sprintf "group deployment create -g %s --template-file %s --parameters %s --parameters appName=%s spotifyApiClientId=%s spotifyApiClientSecret=%s --query \"properties.provisioningState\""
+    sprintf "group deployment create -g %s --template-file %s --parameters %s --parameters appName=%s spotifyApiClientId=%s spotifyApiClientSecret=%s --query \"[properties.provisioningState, properties.outputs.storageResourceName.value]\""
         appName
         templateFile
         parameterSet
@@ -65,8 +76,15 @@ Target.create "RunGroupDeployment" <| fun ctx ->
         spotifyApiClientId
         spotifyApiClientSecret
     |> runAzureCli
+    |> parseDeploymentStatus
     |> function
-        | "\"Succeeded\"" -> ()
+        | Some (status, storageResourceName) -> 
+            sprintf "storage blob service-properties update --account-name %s --static-website --index-document index.html --query \"staticWebsite.enabled\"" storageResourceName
+            |> runAzureCli
+            |> Seq.last
+            |> function
+               | "true" -> ()
+               | output -> failwith (sprintf "Could not enable static website for storage. Output: %s" output)
         | _ -> failwith (sprintf "Could not provision resource group for app '%s' with parameterSet '%s'" appName parameterSet)
 
 Target.create "DeployFunctionApp" <| fun ctx ->
@@ -88,6 +106,7 @@ Target.create "DeployFunctionApp" <| fun ctx ->
         appName
         zipFile
     |> runAzureCli
+    |> Seq.last
     |> function
         | "4" -> () // 4 = Success, 3 = Failed
         | output -> failwith (sprintf "Could not deploy zipfile '%s' to function app '%s'. Output: %s" zipFile appName output)

@@ -251,5 +251,11 @@
         }
       }
     }
-  ]
+  ],
+  "outputs": {
+    "StorageResourceName": {
+      "type": "string",
+      "value": "[variables('storageAccountName')]"
+    }
+  }
 }
