@@ -1,0 +1,261 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the function app."
+      }
+    },
+    "spotifyApiClientId": {
+      "type": "string",
+      "metadata": {
+        "description": "The Spotify API client id."
+      }
+    },
+    "spotifyApiClientSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "The Spotify API client secret."
+      }
+    },
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": ["Standard_LRS", "Standard_GRS", "Standard_RAGRS"],
+      "metadata": {
+        "description": "Storage Account type"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    },
+    "runtime": {
+      "type": "string",
+      "defaultValue": "dotnet",
+      "allowedValues": ["node", "dotnet", "java"],
+      "metadata": {
+        "description": "The language worker runtime to load in the function app."
+      }
+    }
+  },
+  "variables": {
+    "appNameShort": "[substring(parameters('appName'),0,5)]",
+    "functionAppName": "[parameters('appName')]",
+    "functionAppIdentityId": "[concat(resourceId('Microsoft.Web/sites', variables('functionAppName')), '/providers/Microsoft.ManagedIdentity/Identities/default')]",
+    "hostingPlanName": "[parameters('appName')]",
+    "applicationInsightsName": "[parameters('appName')]",
+    "signalRHubName": "[concat(variables('appNameShort'), uniquestring(resourceGroup().id))]",
+    "keyVaultName": "[concat(variables('appNameShort'), uniquestring(resourceGroup().id))]",
+    "storageAccountName": "[concat(variables('appNameShort'), uniquestring(resourceGroup().id))]",
+    "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+    "functionWorkerRuntime": "[parameters('runtime')]",
+    "roleAssignmentName": "[guid('FunctionAppRoleAssignment', parameters('appName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "apiVersion": "2018-02-01",
+      "location": "[parameters('location')]",
+      "kind": "StorageV2",
+      "sku": {
+        "name": "[parameters('storageAccountType')]"
+      }
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2015-04-01",
+      "name": "[variables('hostingPlanName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "name": "[variables('hostingPlanName')]",
+        "computeMode": "Dynamic",
+        "sku": "Dynamic"
+      }
+    },
+    {
+      "apiVersion": "2016-08-01",
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('functionAppName')]",
+      "location": "[parameters('location')]",
+      "kind": "functionapp",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+      ],
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "AzureKeyVaultEndpoint",
+              "value": "[concat('https://', variables('keyVaultName'), '.vault.azure.net/')]"
+            },
+            {
+              "name": "AzureSignalRConnectionString",
+              "value": "[concat('Endpoint=https://', variables('signalRHubName'), '.service.signalr.net;AccessKey=', listKeys(resourceId('Microsoft.SignalRService/SignalR', variables('signalRHubName')), providers('Microsoft.SignalRService','SignalR').apiVersions[0]).primaryKey, ';Version=1.0')]"
+            },
+            {
+              "name": "AzureTokenProviderConnectionString",
+              "value": "RunAs=App"
+            },
+            {
+              "name": "ActiveListenerIntervalSeconds",
+              "value": "10"
+            },
+            {
+              "name": "InactiveListenerIntervalSeconds",
+              "value": "300"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "value": "[toLower(variables('functionAppName'))]"
+            },
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~2"
+            },
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "value": "8.11.1"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
+            },
+            {
+              "name": "FUNCTIONS_WORKER_RUNTIME",
+              "value": "[variables('functionWorkerRuntime')]"
+            },
+            {
+              "name": "SpotifyApiClientId",
+              "value": "[parameters('spotifyApiClientId')]"
+            },
+            {
+              "name": "SpotifyApiClientSecret",
+              "value": "[parameters('spotifyApiClientSecret')]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "apiVersion": "2018-05-01-preview",
+      "name": "[variables('applicationInsightsName')]",
+      "type": "microsoft.insights/components",
+      "location": "[parameters('location')]",
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('applicationInsightsName'))]": "Resource"
+      },
+      "properties": {
+        "ApplicationId": "[variables('applicationInsightsName')]",
+        "Request_Source": "IbizaWebAppExtensionCreate"
+      }
+    },
+    {
+      "type": "Microsoft.SignalRService/SignalR",
+      "apiVersion": "2018-10-01",
+      "name": "[variables('signalRHubName')]",
+      "location": "northeurope",
+      "sku": {
+        "name": "Free_F1",
+        "tier": "Free",
+        "size": "F1",
+        "capacity": 1
+      },
+      "properties": {
+        "features": [{ "flag": "ServiceMode", "value": "Serverless" }],
+        "hostNamePrefix": "[variables('signalRHubName')]"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2017-09-01",
+      "name": "[variables('roleAssignmentName')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+      ],
+      "properties": {
+        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+        "principalId": "[reference(variables('functionAppIdentityId'), '2015-08-31-PREVIEW').principalId]",
+        "scope": "[resourceGroup().id]"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "name": "[variables('keyVaultName')]",
+      "apiVersion": "2018-02-14",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+      ],
+      "properties": {
+        "enabledForDeployment": false,
+        "enabledForDiskEncryption": false,
+        "enabledForTemplateDeployment": false,
+        "tenantId": "[reference(variables('functionAppIdentityId'), '2015-08-31-PREVIEW').tenantId]",
+        "accessPolicies": [
+          {
+            "tenantId": "[reference(variables('functionAppIdentityId'), '2015-08-31-PREVIEW').tenantId]",
+            "objectId": "[reference(variables('functionAppIdentityId'), '2015-08-31-PREVIEW').principalId]",
+            "permissions": {
+              "keys": [
+                "get",
+                "list",
+                "update",
+                "create",
+                "import",
+                "delete",
+                "recover",
+                "backup",
+                "restore"
+              ],
+              "secrets": [
+                "get",
+                "list",
+                "set",
+                "delete",
+                "recover",
+                "backup",
+                "restore"
+              ]
+            }
+          }
+        ],
+        "sku": {
+          "name": "Standard",
+          "family": "A"
+        },
+        "networkAcls": {
+          "value": {
+            "defaultAction": "Allow",
+            "bypass": "AzureServices"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "StorageResourceName": {
+      "type": "string",
+      "value": "[variables('storageAccountName')]"
+    }
+  }
+}
