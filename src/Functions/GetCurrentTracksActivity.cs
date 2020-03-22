@@ -6,6 +6,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Functions.Common;
 using Functions.Models.Orchestrator;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 
 namespace Functions
 {

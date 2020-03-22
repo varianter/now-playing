@@ -9,6 +9,7 @@ using Functions.Models.Orchestrator;
 using Microsoft.WindowsAzure.Storage.Table;
 using Functions.Repositories;
 using Functions.Models.Table;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 
 namespace Functions
 {
@@ -16,7 +17,7 @@ namespace Functions
     {
         [FunctionName(FunctionNames.GetAllUsersActivity)]
         public static async Task<IList<UserEntity>> Run(
-            [ActivityTrigger] DurableActivityContext ctx,
+            [ActivityTrigger] IDurableActivityContext ctx,
             [Table(
                 TableConstants.UserTable,
                 Connection = Constants.StorageConnection

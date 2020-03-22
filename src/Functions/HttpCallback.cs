@@ -71,7 +71,7 @@ namespace Functions
                 ExpiresInUtc = DateTime.UtcNow.AddSeconds(tokenResponse.expires_in)
             });
 
-            return new RedirectResult("http://localhost:3000");
+            return new RedirectResult("/");
         }
     }
 }

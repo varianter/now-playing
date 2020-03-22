@@ -7,6 +7,7 @@ using Functions.Common;
 using System.Threading.Tasks;
 using System;
 using Functions.Models.Orchestrator;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 
 namespace Functions
 {
@@ -16,14 +17,14 @@ namespace Functions
         public static async Task<SignalRConnectionInfo> GetSignalRInfo(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "negotiate")] HttpRequest req,
             [SignalRConnectionInfo(HubName = Constants.NowPlayingHubName)] SignalRConnectionInfo connectionInfo,
-            [OrchestrationClient] DurableOrchestrationClient starter,
+            [DurableClient] IDurableOrchestrationClient starter,
             ILogger log)
         {
             await WakeUpOrchestrator(starter, log);
             return connectionInfo;
         }
 
-        private static async Task WakeUpOrchestrator(DurableOrchestrationClient starter, ILogger log)
+        private static async Task WakeUpOrchestrator(IDurableOrchestrationClient starter, ILogger log)
         {
             // TODO: This should live elsewhere, dependent on any frontend calling /ping before orchestration loop starts or is woken up
             // Ideally, should react to users connecting/disconnecting to SignalR. Have to use ping because we know when they connect (negotiate),

@@ -23,7 +23,11 @@
     "storageAccountType": {
       "type": "string",
       "defaultValue": "Standard_LRS",
-      "allowedValues": ["Standard_LRS", "Standard_GRS", "Standard_RAGRS"],
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Standard_RAGRS"
+      ],
       "metadata": {
         "description": "Storage Account type"
       }
@@ -38,7 +42,11 @@
     "runtime": {
       "type": "string",
       "defaultValue": "dotnet",
-      "allowedValues": ["node", "dotnet", "java"],
+      "allowedValues": [
+        "node",
+        "dotnet",
+        "java"
+      ],
       "metadata": {
         "description": "The language worker runtime to load in the function app."
       }
@@ -130,7 +138,7 @@
             },
             {
               "name": "FUNCTIONS_EXTENSION_VERSION",
-              "value": "~2"
+              "value": "~3"
             },
             {
               "name": "WEBSITE_NODE_DEFAULT_VERSION",
@@ -181,7 +189,12 @@
         "capacity": 1
       },
       "properties": {
-        "features": [{ "flag": "ServiceMode", "value": "Serverless" }],
+        "features": [
+          {
+            "flag": "ServiceMode",
+            "value": "Serverless"
+          }
+        ],
         "hostNamePrefix": "[variables('signalRHubName')]"
       }
     },

@@ -8,6 +8,7 @@ using System.Threading;
 using System.Linq;
 using System.Collections.Generic;
 using Functions.Models.Table;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 
 namespace Functions
 {
@@ -15,7 +16,7 @@ namespace Functions
     {
         [FunctionName(FunctionNames.NowPlayingOrchestrator)]
         public static async Task Run(
-            [OrchestrationTrigger] DurableOrchestrationContext ctx,
+            [OrchestrationTrigger] IDurableOrchestrationContext ctx,
             ILogger log)
         {
             var data = ctx.GetInput<OrchestratorData>();
