@@ -70,7 +70,7 @@ namespace Functions
                             fields = new [] {
                                 new {
                                     type = "mrkdwn",
-                                    text = "*Hey! Welcome to now playing* \n Supported commands:\n /nowplaying help \n /nowplaying list"
+                                    text = "*Hey! Welcome to now playing* \n Press the button below to go to the website, or register with Now Playing:"
                                 }
                             }
                     },
