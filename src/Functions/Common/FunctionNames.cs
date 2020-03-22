@@ -9,6 +9,7 @@ namespace Functions.Common
         public const string HttpRecentlyPlayed = "Http_RecentlyPlayed";
         public const string HttpSignalRNegotiate = "Http_SignalRNegotiate";
         public const string NowPlayingOrchestrator = "O_NowPlaying";
+        public const string HttpSlack = "Http_Slack";
         public const string GetCurrentTracksActivity = "A_GetCurrentTracks";
         public const string GetAllUsersActivity = "A_GetAllUsers";
         public const string SignalRTrackActivity = "A_SignalRTrack";
