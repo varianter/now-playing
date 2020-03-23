@@ -78,7 +78,7 @@ namespace Functions
                         new {
                             type = "button",
                             action_id = "dashboard_nowplaying",
-                            url = Config.HostName,
+                            url = Config.HostUrl,
                             text = new {
                                 type = "plain_text",
                                 text = "Dashboard website",
@@ -87,7 +87,7 @@ namespace Functions
                         new {
                             type = "button",
                             action_id = "register_nowplaying",
-                            url = $"{Config.HostName}/api/authorize",
+                            url = $"{Config.HostUrl}api/authorize",
                             text = new {
                                 type = "plain_text",
                                 text = "Register with Now Playing",

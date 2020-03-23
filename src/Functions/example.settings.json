@@ -1,6 +1,7 @@
 {
   "IsEncrypted": false,
   "Values": {
+    "HostUrl": "",
     "SlackToken": "",
     "AzureWebJobsStorage": "",
     "AzureKeyVaultEndpoint": "",
