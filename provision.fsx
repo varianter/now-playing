@@ -63,18 +63,20 @@ Target.create "RunGroupDeployment" <| fun ctx ->
     let appName = tryFindArgument "appName" ctx |> Option.get
     let spotifyApiClientId = tryFindArgument "spotifyApiClientId" ctx |> Option.get
     let spotifyApiClientSecret = tryFindArgument "spotifyApiClientSecret" ctx |> Option.get
+    let slackToken = tryFindArgument "slackToken" ctx |> Option.get
     let parameterSet = 
         tryFindArgument "parameterSet" ctx 
         |> Option.get
         |> sprintf "infrastructure/parameters/%s.parameters.json" 
     let templateFile = "infrastructure/azuredeploy.json"
-    sprintf "group deployment create -g %s --template-file %s --parameters %s --parameters appName=%s spotifyApiClientId=%s spotifyApiClientSecret=%s --query \"[properties.provisioningState, properties.outputs.storageResourceName.value]\""
+    sprintf "group deployment create -g %s --template-file %s --parameters %s --parameters appName=%s spotifyApiClientId=%s spotifyApiClientSecret=%s slackToken=%s --query \"[properties.provisioningState, properties.outputs.storageResourceName.value]\""
         appName
         templateFile
         parameterSet
         appName
         spotifyApiClientId
         spotifyApiClientSecret
+        slackToken
     |> runAzureCli
     |> parseDeploymentStatus
     |> function

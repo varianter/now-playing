@@ -14,6 +14,13 @@
         "description": "The Spotify API client id."
       }
     },
+    "slackToken": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The Slack command token."
+      }
+    },
     "spotifyApiClientSecret": {
       "type": "string",
       "metadata": {
@@ -159,6 +166,14 @@
             {
               "name": "SpotifyApiClientSecret",
               "value": "[parameters('spotifyApiClientSecret')]"
+            },
+            {
+              "name": "SlackToken",
+              "value": "[parameters('slackToken')]"
+            },
+            {
+              "name": "HostUrl",
+              "value": "[concat('https://', variables('functionAppName'), '.azurewebsites.net/')]"
             }
           ]
         }
