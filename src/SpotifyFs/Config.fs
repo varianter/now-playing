@@ -10,7 +10,7 @@ let AccountBaseUrl = "https://accounts.spotify.com"
 let ApiBaseUrl ="https://api.spotify.com"
 
 [<Literal>]
-let RequestedScopes = "user-read-currently-playing user-read-recently-played"
+let RequestedScopes = "user-read-currently-playing user-read-recently-played user-top-read"
 
 let clientId = Environment.GetEnvironmentVariable("SpotifyApiClientId")
 let clientSecret = Environment.GetEnvironmentVariable("SpotifyApiClientSecret")

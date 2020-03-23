@@ -9,7 +9,7 @@ namespace Spotify
         public const string ApiBaseUrl = "https://api.spotify.com";
         public static readonly string ClientId = Environment.GetEnvironmentVariable("SpotifyApiClientId");
         public static readonly string ClientSecret = Environment.GetEnvironmentVariable("SpotifyApiClientSecret");
-        public const string RequestedScopes = "user-read-currently-playing user-read-recently-played";
+        public const string RequestedScopes = "user-read-currently-playing user-read-recently-played user-top-read";
 
         public static string SpotifyApiBasicAuthHeaderValue =>
             Convert.ToBase64String(
